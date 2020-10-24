@@ -1,0 +1,12 @@
+.GearGrid {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+  overflow-y: scroll;
+
+  width: 73%;
+  height: 100%;
+  background: transparent;
+  padding: 2% 4%;
+}
