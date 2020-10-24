@@ -15,30 +15,17 @@ body,
   --text: rgb(52, 58, 64);
 }
 
-h1,
-h2 {
+p {
   font-style: normal;
-  font-weight: bold;
+  font-weight: normal;
   color: var(--text);
-}
-
-h1 {
-  font-size: 40px;
-}
-
-h2 {
-  font-size: 30px;
-}
-
-button,
-select,
-input {
-  font-family: inherit;
-  color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 button {
+  font-family: inherit;
+  color: var(--text);
+  font-size: 16px;
   cursor: pointer;
   transition: transform 0.4s;
 }

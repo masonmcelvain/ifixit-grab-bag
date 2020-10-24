@@ -20,7 +20,7 @@ export default function Window() {
           setDisplayTitles(data.display_titles);
         } catch (e) {
           console.log(`Bad data: ${data}`);
-          throw `Bad category data in fetchCategoryTree() in Window.js: ${e}`;
+          throw new Error(`Bad category data in fetchCategoryTree() in Window.js: ${e}`);
         }
       })
       .catch(e => console.error('Fetch category tree error in Window.js:', e));
