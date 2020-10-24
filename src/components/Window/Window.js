@@ -9,25 +9,24 @@ export default function Window() {
   let [hierarchy, setHierarchy] = useState(null);
   let [displayTitles, setDisplayTitles] = useState(null);
 
-  const baseURL = "https://www.ifixit.com/api/2.0";
+  let fetchCategoryTree = async () => {
+    const categoryURL = "https://www.ifixit.com/api/2.0/wikis/CATEGORY?display=hierarchy";
 
-  let fetchCategoryTree = (baseURL) => {
-    const categoryURL = "/wikis/CATEGORY?display=hierarchy";
-
-    fetch(baseURL.concat(categoryURL))
+    await fetch(categoryURL)
       .then(res=>res.json())
       .then(data => {
         try {
           setHierarchy(data.hierarchy);
           setDisplayTitles(data.display_titles);
         } catch (e) {
+          console.log(`Bad data: ${data}`);
           throw `Bad category data in fetchCategoryTree() in Window.js: ${e}`;
         }
       })
       .catch(e => console.error('Fetch category tree error in Window.js:', e));
   };
   /* Fetch categories only once on mount */
-  useEffect(() => fetchCategoryTree(baseURL), []);
+  useEffect(() => fetchCategoryTree(), []);
 
   return (
     <div className="Window">
