@@ -2,13 +2,13 @@
   width: 180px;
   height: min-content;
   background: transparent;
-  margin: 0 5px 30px; /* Spacing for displaying in rows */
+  margin: 0 7px 20px; /* Spacing for displaying in rows */
   cursor: pointer;
 }
 
 .ItemCard-image-container {
   width: 100%;
-  height: 140px;
+  height: 135px;
   overflow: hidden;
   position: relative;
   margin: 0;

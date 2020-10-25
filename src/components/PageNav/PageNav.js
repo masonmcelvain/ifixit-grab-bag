@@ -20,11 +20,16 @@ export default function PageNav({ curPage, maxPage, changePage }) {
       </button>
       {
         pageNums.map(n => (
-          <div className="PageNav-n-box" onClick={() => changePage(n - 1)}>
+          <div
+            key={n}
+            className="PageNav-n-box"
+            onClick={() => changePage(n - 1)}
+          >
             <p
               style={{
                 color: n - 1 === curPage ? "var(--ifixit-blue" : "var(--text)",
-                fontWeight: n - 1 === curPage ? "bold" : "normal"
+                fontWeight: n - 1 === curPage ? "bold" : "normal",
+                fontSize: "18px"
               }}
             >
               {n}

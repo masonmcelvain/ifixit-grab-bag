@@ -28,11 +28,16 @@ export default function Window() {
   /* Fetch categories only once on mount */
   useEffect(() => fetchCategoryTree(), []);
 
+  let addItemtoBag = (wiki) => {
+    // TODO: implement add wiki to GearBag
+  };
+
   return (
     <div className="Window">
       <GearGrid 
         hierarchy={hierarchy}
         displayTitles={displayTitles}
+        addItemtoBag={addItemtoBag}
       />
       <GearBag 
         displayTitles={displayTitles}

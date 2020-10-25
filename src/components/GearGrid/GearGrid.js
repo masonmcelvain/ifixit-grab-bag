@@ -4,8 +4,10 @@ import './GearGrid.css';
 import ItemCard from '../ItemCard/ItemCard';
 import PageNav from '../PageNav/PageNav';
 import Loader from '../Loader/Loader';
+import LeafItem from '../LeafItem/LeafItem';
+import CategoryNav from '../CategoryNav/CategoryNav';
 
-export default function GearGrid({ hierarchy, displayTitles }) {
+export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
 
   /**
    * nodePath: [str, str, ...] 
@@ -17,6 +19,7 @@ export default function GearGrid({ hierarchy, displayTitles }) {
   let [wikis, setWikis] = useState([]);
   let [curPage, setCurPage] = useState(0);
   let [maxPage, setMaxPage] = useState(0);
+  let [isLeafNode, setIsLeafNode] = useState(false);
   const ITEMS_PER_PAGE = 12;
 
   /** 
@@ -24,15 +27,14 @@ export default function GearGrid({ hierarchy, displayTitles }) {
    * array of strings. Returns null on error.
    * @param {string} title 
    */
-  let getTitleChildren = (title) => {
+  let getTitlesFromPath = (path) => {
     let curNode = hierarchy;
-
-    for (let node of nodePath) {
-      curNode = hierarchy[node];
+    for (let node of path) {
+      curNode = curNode[node];
     }
 
-    if (Object.keys(curNode).includes(title)) {
-      return Object.values(curNode[title]);
+    if (curNode != null) {
+      return Object.keys(curNode);
     } else {
       return null;
     }
@@ -51,13 +53,22 @@ export default function GearGrid({ hierarchy, displayTitles }) {
   let pushNode = (title) => {
     if (availableTitles.includes(title)) {
       let updatedNodePath = nodePath;
-      nodePath.push(title);
+      updatedNodePath.push(title);
       setNodePath(updatedNodePath);
-      setCurPage(0);
 
-      let newTitles = getTitleChildren(title);
-      setMaxPage(getMaxPage(newTitles));
-      fetchPageContent(newTitles, 0);
+      let newTitles = getTitlesFromPath(updatedNodePath);
+      /* If the node has no children, it is a leaf node */
+      if (newTitles === null) {
+        setIsLeafNode(true);
+        setMaxPage(0);
+        setWikis( [ wikis[availableTitles.indexOf(title)] ] );
+        setAvailableTitles([]);
+      } else {
+        setIsLeafNode(false);
+        setMaxPage(getMaxPage(newTitles));
+        setAvailableTitles(newTitles);
+        fetchPageContent(newTitles, 0);
+      }
     } else {
       throw new Error("Invalid title to pushNode() in GearGrid.js");
     }
@@ -70,6 +81,21 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     let updatedNodePath = nodePath;
     updatedNodePath.pop();
     setNodePath(updatedNodePath);
+  };
+
+  /**
+   * Used by CategoryNav to traverse back to a previous node and update the DOM.
+   * The path, in theory, should never lead to a leaf node.
+   * 
+   * @param {[string, ...]} path - Path down hierarchy to current node.
+   */
+  let goToNode = (path) => {
+    let newTitles = getTitlesFromPath(path);
+    setIsLeafNode(false);
+    setNodePath(path);
+    setMaxPage(getMaxPage(newTitles));
+    setAvailableTitles(newTitles);
+    fetchPageContent(newTitles, 0);
   };
 
   let changePage = (newPageNum) => {
@@ -100,19 +126,20 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     let newWikis = [];
     let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
     let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
-
+    
     // Fetch each of the appropriate titles
     for (let i = nextTitleIndex; i < stopIndex; i++) {
       const title = titles[i];
       const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
       await fetch(wikiURL)
-        .then(res=>res.json())
+        .then(res => res.json())
         .then(data => newWikis.push(data))
         .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
     }
     
     newWikis.sort(compareWikis);
     setWikis(newWikis);
+    setCurPage(pageNum);
   };
 
   /** Initial population of wikis */
@@ -131,20 +158,34 @@ export default function GearGrid({ hierarchy, displayTitles }) {
 
   return (
     <div className="GearGrid">
-      <div className="GearGrid-card-container">
-        {
-          isLoading ?
-          <Loader /> :
-          wikis.map(w => (
-            <ItemCard 
-              key={w.wikiid.toString()}
-              title={w.title}
-              imageObj={w.image}
-              onSelect={pushNode}
-            />
-          ))
-        }
-      </div>
+      <CategoryNav
+        nodePath={nodePath}
+        goToNode={goToNode}
+      />
+      {
+        isLeafNode ?
+        <div className="GearGrid-leaf-card-container">
+          <LeafItem
+            wiki={wikis[0]}
+            onSelect={addItemToBag}
+          />
+        </div>
+        :
+        <div className="GearGrid-card-container">
+          {
+            isLoading ?
+            <Loader /> :
+            wikis.map(w => (
+              <ItemCard 
+                key={w.wikiid.toString()}
+                title={w.title}
+                imageObj={w.image}
+                onSelect={pushNode}
+              />
+            ))
+          }
+        </div>
+      }
       <PageNav 
         curPage={curPage} 
         maxPage={maxPage} 

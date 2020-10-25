@@ -13,8 +13,15 @@ body,
   --window-accent: #dee2e6;
   --card-backdrop: #fff;
   --text: #000;
+  --grey-text: #495057;
   --ifixit-blue: #1876f0;
   --disabled: #757575;
+}
+
+h2 {
+  font-weight: bold;
+  color: var(--text);
+  margin: 0;
 }
 
 p {
