@@ -13,7 +13,10 @@ export default function GearGrid({ hierarchy, displayTitles }) {
   let [nodePath, setNodePath] = useState([]);
   let [availableTitles, setAvailableTitles] = useState([]);
   let [wikis, setWikis] = useState([]);
-  let [cards, setCards] = useState([]);
+  let [pageNum, setPageNum] = useState(0);
+  const ITEMS_PER_PAGE = 12;
+  const ITEMS_PER_ROW = 4;
+  const NUM_ROWS = 3;
 
   /** 
    * Returns the hierarchical children of the node indicated by the title as an 
@@ -46,7 +49,7 @@ export default function GearGrid({ hierarchy, displayTitles }) {
       setNodePath(updatedNodePath);
 
       let newTitles = getTitleChildren(title);
-      fetchPageContent(newTitles, true);
+      fetchPageContent(newTitles);
     } else {
       throw new Error("Invalid title to pushNode() in GearGrid.js");
     }
@@ -76,65 +79,51 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     return 0;
   };
 
-  // TODO: only fetch until one page is full! need to fetch more on page scroll
   /** 
    * Fetches new wikis for the given titles, adding them to state.
    * @param {string} newTitles - Array of new titles to fetch data for. 
    */
-  let fetchPageContent = async (newTitles, clearPage) => {
-    let newWikis = clearPage ? [] : wikis;
-
-    newTitles.forEach(async title => {
+  let fetchPageContent = async (titles) => {
+    let newWikis = [];
+    let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
+    let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
+    console.log(`start: ${nextTitleIndex}`)
+    console.log(`stop: ${stopIndex}`)
+    // Fetch each of the appropriate titles
+    for (let i = nextTitleIndex; i < stopIndex; i++) {
+      const title = titles[i];
       const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
-
       await fetch(wikiURL)
         .then(res=>res.json())
         .then(data => newWikis.push(data))
         .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
-    });
+    }
     
     newWikis.sort(compareWikis);
     setWikis(newWikis);
   };
+
   /* Initial population of wikis */
   useEffect(() => {
     if (hierarchy) {
       let initialTitles = Object.keys(hierarchy);
       setAvailableTitles(initialTitles);
-      fetchPageContent(initialTitles, false);
+      fetchPageContent(initialTitles);
     }
   }, [hierarchy]);
 
-  /**
-   * Builds a list of ItemCard components based on the current wikis.
-   */
-  let renderCards = () => {
-    let updatedCards = cards;
-
-    wikis.forEach(w => {
-      try {
-        updatedCards.push(
-          <ItemCard 
-            key={w.wikiid}
-            title={w.title}
-            imageObj={w.image}
-            displayTitle={displayTitles[w.title]}
-            onSelect={pushNode}
-          />
-        )
-      } catch (e) {
-        console.log("ItemCard rendering failed - bad wiki from fetchPageContent(): ", w);
-        throw new Error(`Error: bad wiki data in GearGrid.js: ${e}`);
-      }
-    });
-
-    setCards(updatedCards);
-  };
-  useEffect(() => renderCards(), [wikis]);
-
   return (
     <div className="GearGrid">
-      {cards}
+      {
+        wikis.map(w => (
+          <ItemCard 
+            key={w.wikiid.toString()}
+            title={w.title}
+            imageObj={w.image}
+            onSelect={pushNode}
+          />
+        ))
+      }
     </div>
   );
 }

@@ -12,7 +12,7 @@ body,
   --window-backdrop: whitesmoke;
   --window-accent: #dee2e6;
   --card-backdrop: #fff;
-  --text: rgb(52, 58, 64);
+  --text: #000;
 }
 
 p {
@@ -20,6 +20,7 @@ p {
   font-weight: normal;
   color: var(--text);
   font-size: 16px;
+  margin: 0;
 }
 
 button {

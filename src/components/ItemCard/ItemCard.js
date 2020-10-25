@@ -4,7 +4,7 @@ import './ItemCard.css';
 import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
-export default function ItemCard({ title, imageObj, displayTitle, onSelect }) {
+export default function ItemCard({ title, imageObj, onSelect }) {
 
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM },
@@ -21,9 +21,10 @@ export default function ItemCard({ title, imageObj, displayTitle, onSelect }) {
       className="ItemCard"
       onClick={() => onSelect(title)}
     >
-      <img src={imageObj.standard} className="ItemCard-image"/>
-      <p className="ItemCard-text">{displayTitle}</p>
-
+      <div className="ItemCard-image-container">
+        <img src={imageObj.standard} className="ItemCard-image"/>
+      </div>
+      <p className="ItemCard-text">{title}</p>
     </div>
   );
 }
