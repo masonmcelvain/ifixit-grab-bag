@@ -3,6 +3,7 @@ import './GearGrid.css';
 
 import ItemCard from '../ItemCard/ItemCard';
 import PageNav from '../PageNav/PageNav';
+import Loader from '../Loader/Loader';
 
 export default function GearGrid({ hierarchy, displayTitles }) {
 
@@ -114,7 +115,7 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     setWikis(newWikis);
   };
 
-  /* Initial population of wikis */
+  /** Initial population of wikis */
   useEffect(() => {
     if (hierarchy) {
       let initialTitles = Object.keys(hierarchy);
@@ -124,10 +125,16 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     }
   }, [hierarchy]);
 
+  /** Show loading page whenever wikis are not up to date */
+  const isLoading = wikis.length === 0 ||
+    availableTitles[curPage * ITEMS_PER_PAGE] !== wikis[0].title;
+
   return (
     <div className="GearGrid">
       <div className="GearGrid-card-container">
         {
+          isLoading ?
+          <Loader /> :
           wikis.map(w => (
             <ItemCard 
               key={w.wikiid.toString()}
