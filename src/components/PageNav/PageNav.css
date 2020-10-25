@@ -23,6 +23,7 @@
 }
 .PageNav-button:disabled {
   background: var(--disabled);
+  cursor: auto;
 }
 
 .PageNav-n-box {

@@ -1,6 +1,4 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import React from 'react';
 import './PageNav.css';
 
 export default function PageNav({ curPage, maxPage, changePage }) {
