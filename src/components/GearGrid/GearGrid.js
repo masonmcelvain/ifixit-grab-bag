@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './GearGrid.css';
 
 import ItemCard from '../ItemCard/ItemCard';
+import PageNav from '../PageNav/PageNav';
 
 export default function GearGrid({ hierarchy, displayTitles }) {
 
@@ -13,10 +14,9 @@ export default function GearGrid({ hierarchy, displayTitles }) {
   let [nodePath, setNodePath] = useState([]);
   let [availableTitles, setAvailableTitles] = useState([]);
   let [wikis, setWikis] = useState([]);
-  let [pageNum, setPageNum] = useState(0);
+  let [curPage, setCurPage] = useState(0);
+  let [maxPage, setMaxPage] = useState(0);
   const ITEMS_PER_PAGE = 12;
-  const ITEMS_PER_ROW = 4;
-  const NUM_ROWS = 3;
 
   /** 
    * Returns the hierarchical children of the node indicated by the title as an 
@@ -37,6 +37,11 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     }
   };
 
+  /** Returns 0-indexed page number */
+  let getMaxPage = (newTitles) => {
+    return Math.floor(newTitles.length / ITEMS_PER_PAGE);
+  };
+
   /**
    * Takes the user 'down' a level to the node specified.
    * @param {string} title - Name of node traversed by user.
@@ -47,9 +52,11 @@ export default function GearGrid({ hierarchy, displayTitles }) {
       let updatedNodePath = nodePath;
       nodePath.push(title);
       setNodePath(updatedNodePath);
+      setCurPage(0);
 
       let newTitles = getTitleChildren(title);
-      fetchPageContent(newTitles);
+      setMaxPage(getMaxPage(newTitles));
+      fetchPageContent(newTitles, 0);
     } else {
       throw new Error("Invalid title to pushNode() in GearGrid.js");
     }
@@ -62,6 +69,11 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     let updatedNodePath = nodePath;
     updatedNodePath.pop();
     setNodePath(updatedNodePath);
+  };
+
+  let changePage = (newPageNum) => {
+    setCurPage(newPageNum);
+    fetchPageContent(availableTitles, newPageNum);
   };
 
   /**
@@ -83,12 +95,11 @@ export default function GearGrid({ hierarchy, displayTitles }) {
    * Fetches new wikis for the given titles, adding them to state.
    * @param {string} newTitles - Array of new titles to fetch data for. 
    */
-  let fetchPageContent = async (titles) => {
+  let fetchPageContent = async (titles, pageNum) => {
     let newWikis = [];
     let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
     let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
-    console.log(`start: ${nextTitleIndex}`)
-    console.log(`stop: ${stopIndex}`)
+
     // Fetch each of the appropriate titles
     for (let i = nextTitleIndex; i < stopIndex; i++) {
       const title = titles[i];
@@ -108,22 +119,30 @@ export default function GearGrid({ hierarchy, displayTitles }) {
     if (hierarchy) {
       let initialTitles = Object.keys(hierarchy);
       setAvailableTitles(initialTitles);
-      fetchPageContent(initialTitles);
+      setMaxPage(getMaxPage(initialTitles));
+      fetchPageContent(initialTitles, curPage);
     }
   }, [hierarchy]);
 
   return (
     <div className="GearGrid">
-      {
-        wikis.map(w => (
-          <ItemCard 
-            key={w.wikiid.toString()}
-            title={w.title}
-            imageObj={w.image}
-            onSelect={pushNode}
-          />
-        ))
-      }
+      <div className="GearGrid-card-container">
+        {
+          wikis.map(w => (
+            <ItemCard 
+              key={w.wikiid.toString()}
+              title={w.title}
+              imageObj={w.image}
+              onSelect={pushNode}
+            />
+          ))
+        }
+      </div>
+      <PageNav 
+        curPage={curPage} 
+        maxPage={maxPage} 
+        changePage={changePage}
+      />
     </div>
   );
 }

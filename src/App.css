@@ -13,6 +13,8 @@ body,
   --window-accent: #dee2e6;
   --card-backdrop: #fff;
   --text: #000;
+  --ifixit-blue: #1876f0;
+  --disabled: #757575;
 }
 
 p {
@@ -25,10 +27,9 @@ p {
 
 button {
   font-family: inherit;
-  color: var(--text);
-  font-size: 16px;
   cursor: pointer;
   transition: transform 0.4s;
+  outline: none;
 }
 button:active {
   transform: scale(0.97);

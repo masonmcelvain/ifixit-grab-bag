@@ -1,0 +1,37 @@
+.PageNav {
+  width: min-content;
+  height: 50px;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.PageNav-button {
+  width: 64px;
+  height: 32px;
+  border: none;
+  background: var(--ifixit-blue);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  margin: 0 20px;
+}
+.PageNav-button:disabled {
+  background: var(--disabled);
+}
+
+.PageNav-n-box {
+  width: 30px;
+  height: 30px;
+  margin: 0 10px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
