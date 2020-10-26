@@ -1,8 +1,10 @@
 # iFixit Grab Bag
 ## About this app
 This app lets users create a collection of devices that they own so that they can easily find repair guides and other information for their devices on [iFixit's website](https://www.ifixit.com).
-<br /><br/>
+<br/><br/>
 The app uses [iFixit's API](https://www.ifixit.com/api/2.0/doc) to help users select the devices they own that are supported by iFixit. Users can drag and drop items into their bag, and their bag is persistent across page reloads.
+<br/>
+#### [**Check out the live site**](https://ifixit-grab-bag-mm.netlify.app/)
 
 ## Develop Locally
 
