@@ -5,8 +5,6 @@ import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
 export default function LeafItem({ wiki, onSelect }) {
-  const title = wiki.title;
-  const imageObj = wiki.image;
   /* Cut descriptions that are too long (based on character count) */
   const description = wiki.description.length > 175 ?
                       wiki.description.slice(0, 175).concat("...") :
@@ -25,11 +23,11 @@ export default function LeafItem({ wiki, onSelect }) {
       /* Prevents parent background from displaying in drag preview (corners) */
       style={{transform: 'translate(0, 0)'}}
       className="LeafItem"
-      onClick={() => onSelect(title)}
+      onClick={() => onSelect(wiki)}
     >
-      <img src={imageObj["440x330"]} className="LeafItem-image"/>
-      <h2 className="LeafItem-title">{title}</h2>
-      <p className="LeafItem-desc">{description}</p>
+      <img src={wiki.image["440x330"]} className="LeafItem-image"/>
+      <h2 className="LeafItem-title">{wiki.title}</h2>
+      <p className="LeafItem-desc">{wiki.description}</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@
   width: 180px;
   height: min-content;
   background: transparent;
-  margin: 0 7px 20px; /* Spacing for displaying in rows */
+  margin: 0 7px 25px; /* Spacing for displaying in rows */
   cursor: pointer;
 }
 

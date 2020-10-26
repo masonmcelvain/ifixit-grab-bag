@@ -5,8 +5,6 @@ import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
 export default function ItemCard({ wiki, onSelect }) {
-  const title = wiki.title;
-  const imageObj = wiki.image;
 
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM, wiki },
@@ -21,12 +19,12 @@ export default function ItemCard({ wiki, onSelect }) {
       /* Prevents parent background from displaying in drag preview (corners) */
       style={{transform: 'translate(0, 0)'}}
       className="ItemCard"
-      onClick={() => onSelect(title)}
+      onClick={() => onSelect(wiki.title)}
     >
       <div className="ItemCard-image-container">
-        <img src={imageObj.standard} className="ItemCard-image"/>
+        <img src={wiki.image.standard} className="ItemCard-image"/>
       </div>
-      <p className="ItemCard-text">{title}</p>
+      <p className="ItemCard-text">{wiki.title}</p>
     </div>
   );
 }
