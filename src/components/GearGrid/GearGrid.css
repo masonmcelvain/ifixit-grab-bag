@@ -2,14 +2,14 @@
   width: 73%;
   height: 100%;
   background: transparent;
-  border-radius: 0 16px 16px 0;
+  border-radius: 16px 0 0 16px;
 }
 
 .GearGrid {
   width: 100%;
   height: 100%;
   background: transparent;
-  border-radius: 0 16px 16px 0;
+  border-radius: 16px 0 0 16px;
   padding: 8px 4% 0;
   position: relative;
 }
