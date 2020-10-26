@@ -6,6 +6,7 @@ import { useDrag } from 'react-dnd';
 
 export default function MyItemCard({ wiki }) {
 
+  // eslint-disable-next-line no-unused-vars
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.MYITEM, wiki },
     collect: monitor => ({
@@ -20,7 +21,11 @@ export default function MyItemCard({ wiki }) {
       style={{transform: 'translate(0, 0)'}}
       className="MyItemCard"
     >
-      <img src={wiki.image.thumbnail} className="MyItemCard-image" />
+      <img
+        src={wiki.image.thumbnail}
+        alt={wiki.title}
+        className="MyItemCard-image"
+      />
       <div className="MyItemCard-h4-box">
         <h4 className="MyItemCard-h4">{wiki.title}</h4>
       </div>

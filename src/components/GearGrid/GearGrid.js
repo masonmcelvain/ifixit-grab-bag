@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './GearGrid.css';
 
 import ItemCard from '../ItemCard/ItemCard';
@@ -75,15 +75,6 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
   };
 
   /**
-   * Brings the user 'back up a level' by removing the node last visited.
-   */
-  let popNode = () => {
-    let updatedNodePath = nodePath;
-    updatedNodePath.pop();
-    setNodePath(updatedNodePath);
-  };
-
-  /**
    * Used by CategoryNav to traverse back to a previous node and update the DOM.
    * The path, in theory, should never lead to a leaf node.
    * 
@@ -122,25 +113,25 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
    * Fetches new wikis for the given titles, adding them to state.
    * @param {string} newTitles - Array of new titles to fetch data for. 
    */
-  let fetchPageContent = async (titles, pageNum) => {
-    let newWikis = [];
-    let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
-    let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
-    
-    // Fetch each of the appropriate titles
-    for (let i = nextTitleIndex; i < stopIndex; i++) {
-      const title = titles[i];
-      const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
-      await fetch(wikiURL)
-        .then(res => res.json())
-        .then(data => newWikis.push(data))
-        .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
-    }
-    
-    newWikis.sort(compareWikis);
-    setWikis(newWikis);
-    setCurPage(pageNum);
-  };
+  const fetchPageContent = useCallback(async (titles, pageNum) => {
+      let newWikis = [];
+      let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
+      let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
+      
+      // Fetch each of the appropriate titles
+      for (let i = nextTitleIndex; i < stopIndex; i++) {
+        const title = titles[i];
+        const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
+        await fetch(wikiURL)
+          .then(res => res.json())
+          .then(data => newWikis.push(data))
+          .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
+      }
+      
+      newWikis.sort(compareWikis);
+      setWikis(newWikis);
+      setCurPage(pageNum);
+  }, []);
 
   /** Initial population of wikis */
   useEffect(() => {
@@ -148,9 +139,9 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
       let initialTitles = Object.keys(hierarchy);
       setAvailableTitles(initialTitles);
       setMaxPage(getMaxPage(initialTitles));
-      fetchPageContent(initialTitles, curPage);
+      fetchPageContent(initialTitles, 0); // Start on first page
     }
-  }, [hierarchy]);
+  }, [hierarchy, fetchPageContent]);
 
   /** Show loading page whenever wikis are not up to date */
   const isLoading = wikis.length === 0 ||

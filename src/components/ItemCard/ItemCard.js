@@ -6,6 +6,7 @@ import { useDrag } from 'react-dnd';
 
 export default function ItemCard({ wiki, onSelect }) {
 
+  // eslint-disable-next-line no-unused-vars
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM, wiki },
     collect: monitor => ({
@@ -22,7 +23,11 @@ export default function ItemCard({ wiki, onSelect }) {
       onClick={() => onSelect(wiki.title)}
     >
       <div className="ItemCard-image-container">
-        <img src={wiki.image.standard} className="ItemCard-image"/>
+        <img
+          src={wiki.image.standard}
+          alt={wiki.title}
+          className="ItemCard-image"
+        />
       </div>
       <p className="ItemCard-text">{wiki.title}</p>
     </div>

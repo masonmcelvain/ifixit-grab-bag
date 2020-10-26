@@ -10,6 +10,7 @@ export default function LeafItem({ wiki, onSelect }) {
                       wiki.description.slice(0, 175).concat("...") :
                       wiki.description;
 
+  // eslint-disable-next-line no-unused-vars
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM, wiki },
     collect: monitor => ({
@@ -25,9 +26,13 @@ export default function LeafItem({ wiki, onSelect }) {
       className="LeafItem"
       onClick={() => onSelect(wiki)}
     >
-      <img src={wiki.image["440x330"]} className="LeafItem-image"/>
+      <img
+        src={wiki.image["440x330"]}
+        alt={wiki.title}
+        className="LeafItem-image"
+      />
       <h2 className="LeafItem-title">{wiki.title}</h2>
-      <p className="LeafItem-desc">{wiki.description}</p>
+      <p className="LeafItem-desc">{description}</p>
     </div>
   );
 }

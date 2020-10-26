@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './GearBag.css';
 
 export default function GearBag({ children }) {

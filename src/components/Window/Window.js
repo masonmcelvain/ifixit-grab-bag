@@ -27,7 +27,7 @@ export default function Window() {
     }
     setMyItemWikis(storedWikis);
     setMyWikiKeys(storedWikiKeys);
-  }, []);
+  }, [localStorage]);
 
   let fetchCategoryTree = async () => {
     const categoryURL = "https://www.ifixit.com/api/2.0/wikis/CATEGORY?display=hierarchy";
@@ -70,7 +70,7 @@ export default function Window() {
     let updatedMyWikiKeys = [...myWikiKeys];
 
     let i = updatedMyWikiKeys.indexOf(wiki.wikiid);
-    if (i != -1) {
+    if (i !== -1) {
       updatedMyWikis.splice(i, 1);
       updatedMyWikiKeys.splice(i, 1);
       setMyItemWikis(updatedMyWikis);
@@ -98,9 +98,7 @@ export default function Window() {
       >
         {
           myItemWikis.map(w => {
-            if (w != null) {
-              return <MyItemCard key={w.wikiid} wiki={w} />;
-            }
+            return w === null ? null : <MyItemCard key={w.wikiid} wiki={w} />;
           })
         }
       </GearBagDropArea>
