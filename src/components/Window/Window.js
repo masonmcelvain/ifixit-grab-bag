@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Window.css';
 
 import GearBagDropArea from '../GearBag/GearBagDropArea';
-import GearGrid from '../GearGrid/GearGrid';
 import MyItemCard from '../MyItemCard/MyItemCard';
 import GearGridDropArea from '../GearGrid/GearGridDropArea';
 
@@ -12,6 +11,23 @@ export default function Window() {
   let [displayTitles, setDisplayTitles] = useState(null);
   let [myItemWikis, setMyItemWikis] = useState([]);
   let [myWikiKeys, setMyWikiKeys] = useState([]);
+
+  const localStorage = window.localStorage;
+  const STORAGE_PREFIX = "grab-bag-wiki-";
+
+  /** ComponentDidMount -> check if any wikis exist in localStorage */
+  useEffect(() => {
+    let storedWikis = [];
+    let storedWikiKeys = [];
+    for (const [k, v] of Object.entries(localStorage)) {
+      if (k.includes(STORAGE_PREFIX)) {
+        storedWikis.push(JSON.parse(v));
+        storedWikiKeys.push(JSON.parse(v).wikiid);
+      }
+    }
+    setMyItemWikis(storedWikis);
+    setMyWikiKeys(storedWikiKeys);
+  }, []);
 
   let fetchCategoryTree = async () => {
     const categoryURL = "https://www.ifixit.com/api/2.0/wikis/CATEGORY?display=hierarchy";
@@ -43,6 +59,8 @@ export default function Window() {
       updatedMyWikiKeys.push(wiki.wikiid);
       setMyItemWikis(updatedMyWikis);
       setMyWikiKeys(updatedMyWikiKeys);
+
+      localStorage.setItem(getWikiStorageName(wiki), JSON.stringify(wiki));
     }
   };
 
@@ -57,7 +75,14 @@ export default function Window() {
       updatedMyWikiKeys.splice(i, 1);
       setMyItemWikis(updatedMyWikis);
       setMyWikiKeys(updatedMyWikiKeys);
+
+      localStorage.removeItem(getWikiStorageName(wiki));
     }
+  };
+
+  /** Generates a key value for storing the wiki in localStorage */
+  let getWikiStorageName = (wiki) => {
+    return STORAGE_PREFIX.concat(wiki.wikiid.toString());
   };
   
   return (
