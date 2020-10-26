@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './Window.css';
 
-import GearBag from '../GearBag/GearBag';
+import GearBagDropArea from '../GearBag/GearBagDropArea';
 import GearGrid from '../GearGrid/GearGrid';
+import MyItemCard from '../MyItemCard/MyItemCard';
 
 export default function Window() {
 
   let [hierarchy, setHierarchy] = useState(null);
   let [displayTitles, setDisplayTitles] = useState(null);
+  let [myItemWikis, setMyItemWikis] = useState([]);
+  let [myWikiKeys, setMyWikiKeys] = useState([]);
 
   let fetchCategoryTree = async () => {
     const categoryURL = "https://www.ifixit.com/api/2.0/wikis/CATEGORY?display=hierarchy";
@@ -28,20 +31,37 @@ export default function Window() {
   /* Fetch categories only once on mount */
   useEffect(() => fetchCategoryTree(), []);
 
-  let addItemtoBag = (wiki) => {
-    // TODO: implement add wiki to GearBag
+  let addItemToBag = (wiki) => {
+    let updatedMyWikis = [...myItemWikis];
+    let updatedMyWikiKeys = [...myWikiKeys];
+    
+    /** Duplicate items not permitted in the bag */
+    if (!myWikiKeys.includes(wiki["wikiid"])) {
+      updatedMyWikis.push(wiki);
+      updatedMyWikiKeys.push(wiki["wikiid"]);
+      setMyItemWikis(updatedMyWikis);
+      setMyWikiKeys(updatedMyWikiKeys);
+    }
   };
-
+  
   return (
     <div className="Window">
       <GearGrid 
         hierarchy={hierarchy}
         displayTitles={displayTitles}
-        addItemtoBag={addItemtoBag}
+        addItemToBag={addItemToBag}
       />
-      <GearBag 
-        displayTitles={displayTitles}
-      />
+      <GearBagDropArea
+        addItemToBag={addItemToBag}
+      >
+        {
+          myItemWikis.map(w => {
+            if (w != null) {
+              return <MyItemCard key={w["wikiid"]} wiki={w} />;
+            }
+          })
+        }
+      </GearBagDropArea>
     </div>
   );
 }

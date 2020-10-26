@@ -1,7 +1,15 @@
-.GearBag {
+.GearBagDropArea {
   width: 27%;
   height: 100%;
   background: transparent;
+  border-radius: 0 16px 16px 0;
+}
+
+.GearBag {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border-radius: 0 16px 16px 0;
   overflow-y: scroll;
 }
 

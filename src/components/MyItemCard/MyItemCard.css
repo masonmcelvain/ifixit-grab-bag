@@ -6,4 +6,28 @@
   border-radius: 16px;
   margin: 5px 0; /* spacing for displaying as a vertical stack */
   cursor: pointer;
+  /* position: relative; */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.MyItemCard-image {
+  width: 96px;
+  height: 72px;
+  border-radius: 16px;
+  margin: 0 5px;
+}
+
+.MyItemCard-h4-box {
+  width: 154px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.MyItemCard-h4 {
+  margin-right: 5px;
+  text-align: center;
 }

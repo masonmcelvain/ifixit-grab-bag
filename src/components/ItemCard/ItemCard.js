@@ -4,10 +4,12 @@ import './ItemCard.css';
 import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
-export default function ItemCard({ title, imageObj, onSelect }) {
+export default function ItemCard({ wiki, onSelect }) {
+  const title = wiki.title;
+  const imageObj = wiki.image;
 
   const [{isDragging}, drag] = useDrag({
-    item: { type: ItemTypes.ITEM },
+    item: { type: ItemTypes.ITEM, wiki },
     collect: monitor => ({
       isDragging: !!monitor.isDragging(),
     }),

@@ -178,8 +178,7 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
             wikis.map(w => (
               <ItemCard 
                 key={w.wikiid.toString()}
-                title={w.title}
-                imageObj={w.image}
+                wiki={w}
                 onSelect={pushNode}
               />
             ))

@@ -3,16 +3,12 @@ import './GearBag.css';
 
 import MyItemCard from '../MyItemCard/MyItemCard';
 
-export default function GearBag({ displayTitles }) {
-
-  let [itemsInBag, setItemsInBag] = useState([]);
-
-  let cards = [<MyItemCard />, <MyItemCard />, <MyItemCard />];
+export default function GearBag({ children }) {
 
   return (
     <div className="GearBag">
       <div className="GearBag-card-container">
-        {cards}
+        {children}
         <div className="empty-card"></div>
       </div>
       <div className="GearBag-vertical-bar"></div>

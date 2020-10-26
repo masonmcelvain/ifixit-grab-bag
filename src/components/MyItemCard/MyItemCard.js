@@ -4,7 +4,9 @@ import './MyItemCard.css';
 import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
-export default function MyItemCard() {
+export default function MyItemCard({ wiki }) {
+  const title = wiki.title;
+  const imageObj = wiki.image;
 
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.MYITEM },
@@ -20,7 +22,10 @@ export default function MyItemCard() {
       style={{transform: 'translate(0, 0)'}}
       className="MyItemCard"
     >
-
+      <img src={imageObj["thumbnail"]} className="MyItemCard-image" />
+      <div className="MyItemCard-h4-box">
+        <h4 className="MyItemCard-h4">{title}</h4>
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function LeafItem({ wiki, onSelect }) {
                       wiki.description;
 
   const [{isDragging}, drag] = useDrag({
-    item: { type: ItemTypes.ITEM },
+    item: { type: ItemTypes.ITEM, wiki },
     collect: monitor => ({
       isDragging: !!monitor.isDragging(),
     }),
