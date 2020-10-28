@@ -28,14 +28,14 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
    * array of strings. Returns null on error.
    * @param {string} title 
    */
-  let getTitlesFromPath = (path) => {
+  let getSortedTitlesFromPath = (path) => {
     let curNode = hierarchy;
     for (let node of path) {
       curNode = curNode[node];
     }
 
     if (curNode != null) {
-      return Object.keys(curNode);
+      return Object.keys(curNode).sort();
     } else {
       return null;
     }
@@ -53,17 +53,19 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
    */
   let pushNode = (title) => {
     if (availableTitles.includes(title)) {
-      let updatedNodePath = nodePath;
+      let updatedNodePath = [...nodePath];
       updatedNodePath.push(title);
       setNodePath(updatedNodePath);
 
-      let newTitles = getTitlesFromPath(updatedNodePath);
+      let newTitles = getSortedTitlesFromPath(updatedNodePath);
       /* If the node has no children, it is a leaf node */
       if (newTitles === null) {
         setIsLeafNode(true);
+        setCurPage(0);
         setMaxPage(0);
-        setWikis( [ wikis[availableTitles.indexOf(title)] ] );
-        setAvailableTitles([]);
+        let indexOfLeafWiki = availableTitles.indexOf(title) % ITEMS_PER_PAGE;
+        setWikis( [ wikis[indexOfLeafWiki] ] );
+        setAvailableTitles([title]);
       } else {
         setIsLeafNode(false);
         setMaxPage(getMaxPage(newTitles));
@@ -82,7 +84,7 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
    * @param {[string, ...]} path - Path down hierarchy to current node.
    */
   let goToNode = (path) => {
-    let newTitles = getTitlesFromPath(path);
+    let newTitles = getSortedTitlesFromPath(path);
     setIsLeafNode(false);
     setNodePath(path);
     setMaxPage(getMaxPage(newTitles));
@@ -91,8 +93,10 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
   };
 
   let changePage = (newPageNum) => {
-    setCurPage(newPageNum);
-    fetchPageContent(availableTitles, newPageNum);
+    if (newPageNum !== curPage) {
+      setCurPage(newPageNum);
+      fetchPageContent(availableTitles, newPageNum);
+    }
   };
 
   /**
