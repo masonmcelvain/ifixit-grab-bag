@@ -10,7 +10,6 @@ export default function LeafItem({ wiki, onSelect }) {
                       wiki.description.slice(0, 175).concat("...") :
                       wiki.description;
 
-  // eslint-disable-next-line no-unused-vars
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM, wiki },
     collect: monitor => ({
@@ -18,11 +17,16 @@ export default function LeafItem({ wiki, onSelect }) {
     }),
   });
 
+  const leafItemCardStyle = {
+    transform: 'translate(0, 0)',
+    cursor: isDragging ? 'grabbing' : 'grab'
+  };
+
   return (
     <div
       ref={drag} 
       /* Prevents parent background from displaying in drag preview (corners) */
-      style={{transform: 'translate(0, 0)'}}
+      style={leafItemCardStyle}
       className="LeafItem"
       onClick={() => onSelect(wiki)}
     >

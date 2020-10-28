@@ -6,7 +6,6 @@ import { useDrag } from 'react-dnd';
 
 export default function MyItemCard({ wiki }) {
 
-  // eslint-disable-next-line no-unused-vars
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.MYITEM, wiki },
     collect: monitor => ({
@@ -14,11 +13,16 @@ export default function MyItemCard({ wiki }) {
     }),
   });
 
+  const myItemCardStyle = {
+    transform: 'translate(0, 0)',
+    cursor: isDragging ? 'grabbing' : 'grab'
+  };
+
   return (
     <div 
       ref={drag} 
       /* Prevents parent background from displaying in drag preview (corners) */
-      style={{transform: 'translate(0, 0)'}}
+      style={myItemCardStyle}
       className="MyItemCard"
     >
       <img
