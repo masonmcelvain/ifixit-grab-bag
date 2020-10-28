@@ -20,6 +20,7 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
   let [curPage, setCurPage] = useState(0);
   let [maxPage, setMaxPage] = useState(0);
   let [isLeafNode, setIsLeafNode] = useState(false);
+  let [isLoading, setIsLoading] = useState(false);
   const ITEMS_PER_PAGE = 12;
 
   /** 
@@ -114,23 +115,25 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
    * @param {string} newTitles - Array of new titles to fetch data for. 
    */
   const fetchPageContent = useCallback(async (titles, pageNum) => {
-      let newWikis = [];
-      let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
-      let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
-      
-      // Fetch each of the appropriate titles
-      for (let i = nextTitleIndex; i < stopIndex; i++) {
-        const title = titles[i];
-        const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
-        await fetch(wikiURL)
-          .then(res => res.json())
-          .then(data => newWikis.push(data))
-          .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
-      }
-      
-      newWikis.sort(compareWikis);
-      setWikis(newWikis);
-      setCurPage(pageNum);
+    setIsLoading(true);
+    let newWikis = [];
+    let nextTitleIndex = pageNum * ITEMS_PER_PAGE;
+    let stopIndex = Math.min(nextTitleIndex + ITEMS_PER_PAGE, titles.length);
+    
+    // Fetch each of the appropriate titles
+    for (let i = nextTitleIndex; i < stopIndex; i++) {
+      const title = titles[i];
+      const wikiURL = `https://www.ifixit.com/api/2.0/wikis/CATEGORY/${title}`;
+      await fetch(wikiURL)
+        .then(res => res.json())
+        .then(data => newWikis.push(data))
+        .catch(e => console.error('Fetch page data error in GearGrid.js:', e));
+    }
+    
+    newWikis.sort(compareWikis);
+    setWikis(newWikis);
+    setCurPage(pageNum);
+    setIsLoading(false);
   }, []);
 
   /** Initial population of wikis */
@@ -142,10 +145,6 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
       fetchPageContent(initialTitles, 0); // Start on first page
     }
   }, [hierarchy, fetchPageContent]);
-
-  /** Show loading page whenever wikis are not up to date */
-  const isLoading = wikis.length === 0 ||
-    availableTitles[curPage * ITEMS_PER_PAGE] !== wikis[0].title;
 
   return (
     <div className="GearGrid">
