@@ -5,7 +5,8 @@ import './GearGrid.css';
 import { ItemTypes } from '../../Constants';
 import { useDrop } from 'react-dnd';
 
-export default function GearGridDropArea({ hierarchy, displayTitles, addItemToBag, removeItemFromBag }) {
+export default function GearGridDropArea(props) {
+  let { hierarchy, displayTitles, addItemToBag, removeItemFromBag } = props;
 
   const [{ isOver, droppedItem }, drop] = useDrop({
     accept: ItemTypes.MYITEM,

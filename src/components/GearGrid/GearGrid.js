@@ -150,35 +150,39 @@ export default function GearGrid({ hierarchy, displayTitles, addItemToBag }) {
     }
   }, [hierarchy, fetchPageContent]);
 
+  let renderFetchedItems = () => {
+    return isLoading ?
+      <Loader /> :
+      wikis.map(w => (
+        <ItemCard 
+          key={w.wikiid.toString()}
+          wiki={w}
+          onSelect={pushNode}
+        />
+      ))
+  };
+
+  let renderItemGrid = () => {
+    return isLeafNode ?
+      <div className="GearGrid-leaf-card-container">
+        <LeafItem
+          wiki={wikis[0]}
+          onSelect={addItemToBag}
+        />
+      </div>
+      :
+      <div className="GearGrid-card-container">
+        { renderFetchedItems() }
+      </div>
+  };
+
   return (
     <div className="GearGrid">
       <CategoryNav
         nodePath={nodePath}
         goToNode={goToNode}
       />
-      {
-        isLeafNode ?
-        <div className="GearGrid-leaf-card-container">
-          <LeafItem
-            wiki={wikis[0]}
-            onSelect={addItemToBag}
-          />
-        </div>
-        :
-        <div className="GearGrid-card-container">
-          {
-            isLoading ?
-            <Loader /> :
-            wikis.map(w => (
-              <ItemCard 
-                key={w.wikiid.toString()}
-                wiki={w}
-                onSelect={pushNode}
-              />
-            ))
-          }
-        </div>
-      }
+      { renderItemGrid() }
       <PageNav 
         curPage={curPage} 
         maxPage={maxPage} 

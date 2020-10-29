@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Window.css';
 
-import GearBagDropArea from '../GearBag/GearBagDropArea';
 import MyItemCard from '../MyItemCard/MyItemCard';
+import MyItemCardDropArea from '../MyItemCard/MyItemCardDropArea';
+import GearBagDropArea from '../GearBag/GearBagDropArea';
 import GearGridDropArea from '../GearGrid/GearGridDropArea';
 
 export default function Window() {
@@ -100,10 +101,41 @@ export default function Window() {
     let updatedMyWikis = [...myItemWikis];
     let updatedMyWikiKeys = [...myWikiKeys];
 
-    let i = updatedMyWikiKeys.indexOf(wiki.wikiid);
+    let i = myWikiKeys.indexOf(wiki.wikiid);
     if (i !== -1) {
       updatedMyWikis.splice(i, 1);
       updatedMyWikiKeys.splice(i, 1);
+      updateMyWikisAndStorage(updatedMyWikis, updatedMyWikiKeys);
+    }
+  };
+
+  /**
+   * Reorder the items in the gear bag by putting the given wiki at the given 
+   * index
+   */
+  let moveMyItem = (wiki, newIndex) => {
+    let updatedMyWikis = [...myItemWikis];
+    let updatedMyWikiKeys = [...myWikiKeys];
+
+    let oldIndex = myWikiKeys.indexOf(wiki.wikiid);
+    // If item was found and is being moved to a new spot...
+    if (oldIndex !== -1 && newIndex !== oldIndex) {
+      // If item is being moved to a lower index...
+      if (newIndex < oldIndex) {
+        // ...remove the item at oldIndex + 1 because list was lengthened
+        updatedMyWikis.splice(newIndex, 0, wiki);
+        updatedMyWikiKeys.splice(newIndex, 0, wiki.wikiid);
+        updatedMyWikis.splice(oldIndex + 1, 1);
+        updatedMyWikiKeys.splice(oldIndex + 1, 1);
+      }
+      // ...else if item is being moved to a higher index...
+      else if (newIndex > oldIndex) {
+        // ...put the item at newIndex + 1 so as to not lengthen the list
+        updatedMyWikis.splice(newIndex + 1, 0, wiki);
+        updatedMyWikiKeys.splice(newIndex + 1, 0, wiki.wikiid);
+        updatedMyWikis.splice(oldIndex, 1);
+        updatedMyWikiKeys.splice(oldIndex , 1);
+      }
       updateMyWikisAndStorage(updatedMyWikis, updatedMyWikiKeys);
     }
   };
@@ -127,6 +159,34 @@ export default function Window() {
     
     return STORAGE_PREFIX.concat(strIndexOfWiki);
   };
+
+  let renderMyItemCards = () => {
+    let cardsToDisplay = myItemWikis.map(w => {
+      return w === null ?
+        null : 
+        <MyItemCardDropArea
+          key={w.wikiid}
+          indexOfThisWiki={myItemWikis.indexOf(w)}
+          moveMyItem={moveMyItem}
+          isEmptySpace={false}
+        >
+          <MyItemCard key={w.wikiid} wiki={w} />
+        </MyItemCardDropArea>;
+    });
+    
+    // Display an empty drop area to make it easier to put items at the end
+    if (cardsToDisplay.length > 0) {
+      cardsToDisplay.push(
+        <MyItemCardDropArea
+          key={"lastWikiPlaceholder"}
+          indexOfThisWiki={myItemWikis.length - 1}
+          moveMyItem={moveMyItem}
+          isEmptySpace={true}
+        />
+      );
+    }
+    return cardsToDisplay;
+  };
   
   return (
     <div className="Window">
@@ -139,11 +199,7 @@ export default function Window() {
       <GearBagDropArea
         addItemToBag={addItemToBag}
       >
-        {
-          myItemWikis.map(w => {
-            return w === null ? null : <MyItemCard key={w.wikiid} wiki={w} />;
-          })
-        }
+        { renderMyItemCards() }
       </GearBagDropArea>
     </div>
   );

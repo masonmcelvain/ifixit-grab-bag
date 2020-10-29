@@ -5,7 +5,7 @@ import './GearBag.css';
 import { ItemTypes } from '../../Constants';
 import { useDrop } from 'react-dnd';
 
-export default function GearBagDropArea({ children, wiki, addItemToBag }) {
+export default function GearBagDropArea({ children, addItemToBag }) {
 
   const [{ isOver, droppedItem }, drop] = useDrop({
     accept: ItemTypes.ITEM,
