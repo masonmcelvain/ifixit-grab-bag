@@ -5,6 +5,10 @@ import { ItemTypes } from '../../Constants';
 import { useDrag } from 'react-dnd';
 
 export default function ItemCard({ wiki, onSelect }) {
+  /* Cut titles that are too long (based on character count) */
+  const displayTitle = wiki.title.length > 40 ?
+                wiki.title.slice(0, 40).concat("...") :
+                wiki.title;
 
   const [{isDragging}, drag] = useDrag({
     item: { type: ItemTypes.ITEM, wiki },
@@ -33,7 +37,7 @@ export default function ItemCard({ wiki, onSelect }) {
           className="ItemCard-image"
         />
       </div>
-      <p className="ItemCard-text">{wiki.title}</p>
+      <p className="ItemCard-text">{displayTitle}</p>
     </div>
   );
 }
